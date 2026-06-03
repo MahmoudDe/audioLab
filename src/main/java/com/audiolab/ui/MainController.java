@@ -188,7 +188,6 @@ public class MainController {
         showOptionsForAudio(false);
         updateWorkspaceEmpty(true);
         setActionButtonsEnabled(false);
-        progressBar.setProgress(0);
     }
 
     private void setupWaveform() {
