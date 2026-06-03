@@ -23,6 +23,7 @@ public final class AudioSession {
     private short[] workingSamples = new short[0];
     private byte[] compressedPayload = new byte[0];
     private byte[] containerBytes = new byte[0];
+    private AudioMetadata playbackMetadata;
 
     public ObjectProperty<File> sourceFileProperty() {
         return sourceFile;
@@ -92,6 +93,7 @@ public final class AudioSession {
         workingSamples = Arrays.copyOf(samples, samples.length);
         compressedPayload = new byte[0];
         containerBytes = new byte[0];
+        playbackMetadata = null;
         lastReport.set(null);
         processingState.set(ProcessingState.IDLE);
 
@@ -107,6 +109,25 @@ public final class AudioSession {
         workingSamples = Arrays.copyOf(samples, samples.length);
     }
 
+    public void setPlaybackMetadata(AudioMetadata meta) {
+        playbackMetadata = meta;
+    }
+
+    public AudioMetadata playbackMetadata() {
+        if (playbackMetadata != null) {
+            return playbackMetadata;
+        }
+        AudioMetadata source = metadata.get();
+        if (source == null) {
+            throw new IllegalStateException("No audio metadata");
+        }
+        return source.forPlayback(workingSamples, source.sampleRate());
+    }
+
+    public void clearPlaybackMetadata() {
+        playbackMetadata = null;
+    }
+
     public void setCompressed(byte[] payload, byte[] container) {
         compressedPayload = payload != null ? Arrays.copyOf(payload, payload.length) : new byte[0];
         containerBytes = container != null ? Arrays.copyOf(container, container.length) : new byte[0];
@@ -119,6 +140,7 @@ public final class AudioSession {
         workingSamples = Arrays.copyOf(originalSamples, originalSamples.length);
         compressedPayload = new byte[0];
         containerBytes = new byte[0];
+        playbackMetadata = null;
         lastReport.set(null);
         processingState.set(ProcessingState.IDLE);
     }
@@ -130,6 +152,7 @@ public final class AudioSession {
         workingSamples = new short[0];
         compressedPayload = new byte[0];
         containerBytes = new byte[0];
+        playbackMetadata = null;
         lastReport.set(null);
         processingState.set(ProcessingState.IDLE);
     }

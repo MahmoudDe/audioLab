@@ -72,4 +72,31 @@ public record AudioMetadata(
         int seconds = totalSeconds % 60;
         return String.format("%d:%02d", minutes, seconds);
     }
+
+    /** Builds metadata for playing or exporting a PCM buffer at a specific sample rate. */
+    public AudioMetadata forPlayback(short[] samples, float playbackSampleRate) {
+        int frames = samples.length / Math.max(1, channels);
+        double duration = frames / playbackSampleRate;
+        int bytesPerFrame = channels * (bitDepth / 8);
+        AudioFormat playbackFormat = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                playbackSampleRate,
+                bitDepth,
+                channels,
+                bytesPerFrame,
+                playbackSampleRate,
+                false);
+        int playbackBitRate = (int) (playbackSampleRate * channels * bitDepth);
+        return new AudioMetadata(
+                fileName,
+                filePath,
+                fileSizeBytes,
+                duration,
+                playbackSampleRate,
+                channels,
+                bitDepth,
+                playbackBitRate,
+                encodingType,
+                playbackFormat);
+    }
 }

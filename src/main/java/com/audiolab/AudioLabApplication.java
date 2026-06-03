@@ -1,6 +1,7 @@
 package com.audiolab;
 
 import com.audiolab.i18n.I18n;
+import com.audiolab.theme.AppFonts;
 import com.audiolab.ui.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +18,7 @@ public class AudioLabApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        AppFonts.load();
         I18n.load(Locale.getDefault());
 
         FXMLLoader loader = new FXMLLoader(

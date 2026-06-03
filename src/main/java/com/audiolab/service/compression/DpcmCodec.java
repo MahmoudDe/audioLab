@@ -22,9 +22,12 @@ public final class DpcmCodec implements AudioCodec {
                 throw new CancellationException();
             }
             for (int ch = 0; ch < channels; ch++) {
+                if (frame == 0) {
+                    continue;
+                }
                 int idx = frame * channels + ch;
                 short current = samples[idx];
-                short previous = frame == 0 ? 0 : samples[(frame - 1) * channels + ch];
+                short previous = samples[(frame - 1) * channels + ch];
                 int diff = current - previous;
                 int quantized = quantize(diff, step, levels);
                 out.write(quantized & 0xFF);

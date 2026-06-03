@@ -135,6 +135,8 @@ public final class CompressionService {
                         callback
                 );
                 session.setWorkingSamples(decoded);
+                session.metadata().ifPresent(source -> session.setPlaybackMetadata(
+                        source.forPlayback(decoded, header.settings().getTargetSampleRate())));
                 session.setProcessingState(ProcessingState.IDLE);
                 monitor.finish();
                 onSuccess.run();

@@ -1,7 +1,18 @@
 /* AudioLab — light, minimal theme */
 
+@font-face {
+    font-family: "Noto Sans";
+    src: url("../fonts/NotoSans-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Noto Sans";
+    src: url("../fonts/NotoSans-Bold.ttf");
+    -fx-font-weight: bold;
+}
+
 .root, .app-root {
-    -fx-font-family: "SF Pro Text", "Segoe UI", "Helvetica Neue", sans-serif;
+    -fx-font-family: "Noto Sans", sans-serif;
     -fx-font-size: 13px;
     -fx-background-color: #f8fafc;
 }

@@ -3,11 +3,10 @@ package com.audiolab.service;
 import com.audiolab.model.AudioMetadata;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
-
 import java.io.ByteArrayInputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -30,9 +29,20 @@ public final class AudioPlaybackService {
     public void play(short[] samples, AudioMetadata metadata) throws Exception {
         stop();
         AudioFormat format = metadata.audioFormat();
+        int frameSize = format.getFrameSize();
+        if (frameSize <= 0) {
+            throw new IllegalArgumentException("Unsupported audio format");
+        }
         byte[] pcm = new AudioIOService().samplesToPcmBytes(samples);
+        long frameLength = pcm.length / frameSize;
+        if (frameLength <= 0) {
+            throw new IllegalArgumentException("No audio samples to play");
+        }
+
+        AudioInputStream stream = new AudioInputStream(
+                new ByteArrayInputStream(pcm), format, frameLength);
         clip = AudioSystem.getClip();
-        clip.open(format, pcm, 0, pcm.length);
+        clip.open(stream);
         clip.addLineListener(event -> {
             if (event.getType() == LineEvent.Type.STOP) {
                 playing.set(false);
@@ -46,7 +56,6 @@ public final class AudioPlaybackService {
 
     public void stop() {
         if (clip != null) {
-            clip.removeLineListener(ignored -> {});
             if (clip.isRunning()) {
                 clip.stop();
             }

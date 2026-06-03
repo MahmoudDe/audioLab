@@ -416,7 +416,7 @@ public class MainController {
             return;
         }
         try {
-            AudioMetadata metadata = session.metadata().orElseThrow();
+            AudioMetadata metadata = session.playbackMetadata();
             playbackService.play(session.workingSamples(), metadata);
         } catch (Exception e) {
             showError(e.getMessage());
@@ -527,7 +527,7 @@ public class MainController {
                 if (!name.endsWith(".wav")) {
                     file = new File(file.getParentFile(), file.getName() + ".wav");
                 }
-                AudioMetadata metadata = session.metadata().orElseThrow();
+                AudioMetadata metadata = session.playbackMetadata();
                 exportService.saveDecompressedWav(file, session.workingSamples(), metadata);
             }
             setStatus(I18n.get("status.saved", file.getName()), StatusMode.IDLE);
