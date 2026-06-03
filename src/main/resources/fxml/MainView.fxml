@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.XYChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="root" styleClass="app-root" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.audiolab.ui.MainController">
+    <top>
+        <VBox spacing="0">
+            <HBox styleClass="app-header" alignment="CENTER_LEFT">
+                <HBox styleClass="brand-row" alignment="CENTER_LEFT" spacing="12">
+                    <StackPane styleClass="brand-badge">
+                        <Label text="Au" styleClass="brand-badge-text"/>
+                    </StackPane>
+                    <VBox styleClass="brand-block">
+                        <Label fx:id="appLogoLabel" styleClass="app-logo"/>
+                        <Label fx:id="appTaglineLabel" styleClass="app-tagline"/>
+                    </VBox>
+                </HBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox spacing="8" alignment="CENTER_RIGHT">
+                    <Button fx:id="btnOpen" styleClass="tool-button, tool-button-primary" onAction="#onOpenAudio"/>
+                    <Button fx:id="btnPlay" styleClass="tool-button" onAction="#onTogglePlayback"/>
+                    <Button fx:id="btnCompress" styleClass="tool-button" onAction="#onCompress"/>
+                    <Button fx:id="btnDecompress" styleClass="tool-button" onAction="#onDecompress"/>
+                    <Button fx:id="btnSave" styleClass="tool-button" onAction="#onSave"/>
+                    <Button fx:id="btnReset" styleClass="tool-button, tool-button-accent" onAction="#onReset"/>
+                </HBox>
+            </HBox>
+            <Region styleClass="header-accent-line" maxHeight="2" minHeight="2"/>
+            <MenuBar styleClass="hidden-menu">
+                <Menu fx:id="menuFile">
+                    <MenuItem fx:id="menuOpen" onAction="#onOpenAudio"/>
+                    <MenuItem fx:id="menuSave" onAction="#onSave"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem fx:id="menuReset" onAction="#onReset"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem fx:id="menuExit" onAction="#onExit"/>
+                </Menu>
+            </MenuBar>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="workspace-shell" spacing="10">
+            <HBox styleClass="workspace-bar" alignment="CENTER_LEFT" spacing="12">
+                <Label fx:id="workspaceTitleLabel" styleClass="workspace-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="workspaceHintLabel" styleClass="workspace-hint"/>
+            </HBox>
+            <StackPane fx:id="workspacePane" styleClass="workspace-card" minHeight="320" VBox.vgrow="ALWAYS">
+                <VBox spacing="12" alignment="CENTER">
+                    <StackPane fx:id="waveformHost" styleClass="waveform-host" maxWidth="Infinity"/>
+                    <ProgressBar fx:id="progressBar" styleClass="progress-main" maxWidth="Infinity" prefHeight="10"/>
+                    <HBox spacing="12" alignment="CENTER" maxWidth="Infinity">
+                        <LineChart fx:id="ratioChart" styleClass="monitor-chart" HBox.hgrow="ALWAYS" prefHeight="180" animated="false">
+                            <xAxis>
+                                <NumberAxis fx:id="ratioTimeAxis" label="Time (s)"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis fx:id="ratioValueAxis" label="Savings %"/>
+                            </yAxis>
+                        </LineChart>
+                        <LineChart fx:id="speedChart" styleClass="monitor-chart" HBox.hgrow="ALWAYS" prefHeight="180" animated="false">
+                            <xAxis>
+                                <NumberAxis fx:id="speedTimeAxis" label="Time (s)"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis fx:id="speedValueAxis" label="Samples / sec"/>
+                            </yAxis>
+                        </LineChart>
+                    </HBox>
+                </VBox>
+                <VBox fx:id="workspaceEmpty" styleClass="empty-state" alignment="CENTER">
+                    <StackPane styleClass="empty-icon-ring">
+                        <Label styleClass="empty-icon" text="♫"/>
+                    </StackPane>
+                    <Label fx:id="emptyTitleLabel" styleClass="empty-title"/>
+                    <Label fx:id="emptySubtitleLabel" styleClass="empty-subtitle"/>
+                    <Button fx:id="btnOpenEmpty" styleClass="tool-button, tool-button-primary" onAction="#onOpenAudio"/>
+                    <Label fx:id="emptyHintLabel" styleClass="empty-hint"/>
+                </VBox>
+            </StackPane>
+        </VBox>
+    </center>
+
+    <right>
+        <ScrollPane fx:id="sidebarScroll" styleClass="sidebar-scroll"
+                    fitToWidth="true" prefWidth="400" minWidth="340" hbarPolicy="NEVER">
+            <VBox fx:id="sidebarContent" styleClass="sidebar-content" spacing="12" fillWidth="true" minWidth="320">
+                <padding>
+                    <Insets top="18" right="18" bottom="18" left="18"/>
+                </padding>
+
+                <VBox styleClass="sidebar-header card-hero">
+                    <Label fx:id="sidebarTitleLabel" styleClass="sidebar-title"/>
+                    <Label fx:id="sidebarSubtitleLabel" styleClass="sidebar-subtitle"/>
+                </VBox>
+
+                <VBox styleClass="card card-compact">
+                    <Label fx:id="sidebarSectionMetadata" styleClass="section-title"/>
+                    <VBox styleClass="meta-grid" spacing="6">
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="metaKeyName" styleClass="meta-key"/>
+                            <Label fx:id="metaNameLabel" styleClass="meta-value" wrapText="true" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="metaKeySize" styleClass="meta-key"/>
+                            <Label fx:id="metaSizeLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="metaKeyDuration" styleClass="meta-key"/>
+                            <Label fx:id="metaDurationLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="metaKeySampleRate" styleClass="meta-key"/>
+                            <Label fx:id="metaSampleRateLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="metaKeyChannels" styleClass="meta-key"/>
+                            <Label fx:id="metaChannelsLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="metaKeyBitRate" styleClass="meta-key"/>
+                            <Label fx:id="metaBitRateLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="metaKeyEncoding" styleClass="meta-key"/>
+                            <Label fx:id="metaEncodingLabel" styleClass="meta-value" wrapText="true" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <VBox fx:id="optionsPlaceholder" styleClass="options-placeholder" spacing="8" alignment="CENTER">
+                    <Label fx:id="optionsPlaceholderTitle" styleClass="empty-title"/>
+                    <Label fx:id="optionsPlaceholderText" wrapText="true" maxWidth="Infinity" styleClass="section-hint"/>
+                </VBox>
+
+                <VBox fx:id="settingsCard" styleClass="card" spacing="10" visible="false" managed="false">
+                    <Label fx:id="sidebarSectionSettings" styleClass="section-title"/>
+                    <VBox styleClass="settings-grid" spacing="8">
+                        <Label fx:id="settingsAlgorithmLabel" styleClass="field-label"/>
+                        <ComboBox fx:id="algorithmCombo" maxWidth="Infinity"/>
+                        <Label fx:id="settingsSampleRateLabel" styleClass="field-label"/>
+                        <Spinner fx:id="sampleRateSpinner" editable="true" maxWidth="Infinity"/>
+                        <Label fx:id="settingsQuantizationLabel" styleClass="field-label"/>
+                        <Spinner fx:id="quantizationSpinner" editable="true" maxWidth="Infinity"/>
+                        <Label fx:id="settingsStepSizeLabel" styleClass="field-label"/>
+                        <Spinner fx:id="stepSizeSpinner" editable="true" maxWidth="Infinity"/>
+                        <Label fx:id="settingsInitialStepLabel" styleClass="field-label"/>
+                        <Spinner fx:id="initialStepSpinner" editable="true" maxWidth="Infinity"/>
+                        <Label fx:id="settingsMinStepLabel" styleClass="field-label"/>
+                        <Spinner fx:id="minStepSpinner" editable="true" maxWidth="Infinity"/>
+                        <Label fx:id="settingsMaxStepLabel" styleClass="field-label"/>
+                        <Spinner fx:id="maxStepSpinner" editable="true" maxWidth="Infinity"/>
+                        <Label fx:id="settingsAdaptationLabel" styleClass="field-label"/>
+                        <Spinner fx:id="adaptationSpinner" editable="true" maxWidth="Infinity"/>
+                    </VBox>
+                </VBox>
+
+                <VBox fx:id="reportCard" styleClass="card card-compact" spacing="8" visible="false" managed="false">
+                    <Label fx:id="sidebarSectionReport" styleClass="section-title"/>
+                    <Label fx:id="reportEmptyLabel" styleClass="report-empty"/>
+                    <VBox fx:id="reportContent" spacing="6" visible="false" managed="false">
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="reportKeyOriginal" styleClass="meta-key"/>
+                            <Label fx:id="reportOriginalLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="reportKeyCompressed" styleClass="meta-key"/>
+                            <Label fx:id="reportCompressedLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="reportKeySavings" styleClass="meta-key"/>
+                            <Label fx:id="reportSavingsLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="reportKeyElapsed" styleClass="meta-key"/>
+                            <Label fx:id="reportElapsedLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="reportKeyAlgorithm" styleClass="meta-key"/>
+                            <Label fx:id="reportAlgorithmLabel" styleClass="meta-value" wrapText="true" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="reportKeySettings" styleClass="meta-key"/>
+                            <Label fx:id="reportSettingsLabel" styleClass="meta-value" wrapText="true" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="reportKeyAvgSpeed" styleClass="meta-key"/>
+                            <Label fx:id="reportAvgSpeedLabel" styleClass="meta-value"/>
+                        </HBox>
+                        <HBox styleClass="meta-row">
+                            <Label fx:id="reportKeyPeakSpeed" styleClass="meta-key"/>
+                            <Label fx:id="reportPeakSpeedLabel" styleClass="meta-value"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </right>
+
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="10">
+            <StackPane fx:id="statusDotPane" styleClass="status-dot, status-dot-idle"/>
+            <ProgressIndicator fx:id="statusSpinner" styleClass="status-progress" prefWidth="18" prefHeight="18" visible="false" managed="false"/>
+            <Label fx:id="statusLabel" styleClass="status-text" HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnCancel" styleClass="tool-button, tool-button-danger" onAction="#onCancel" visible="false" managed="false"/>
+            <Label fx:id="shortcutsLabel" styleClass="shortcuts-label"/>
+        </HBox>
+    </bottom>
+</BorderPane>
