@@ -2,28 +2,28 @@ package com.audiolab.theme;
 
 import javafx.scene.paint.Color;
 
-/** Design tokens for AudioLab (Tokyo Night–inspired). */
+/** Design tokens for AudioLab (light theme). */
 public final class AppColors {
 
-    public static final Color BACKGROUND = Color.web("#0d1b2a");
-    public static final Color BACKGROUND_ALT = Color.web("#1a2633");
-    public static final Color SURFACE = Color.web("#263849");
-    public static final Color SURFACE_ELEVATED = Color.web("#2f4a66");
-    public static final Color CARD = Color.web("#3d5a80");
-    public static final Color CARD_HOVER = Color.web("#4a6fa5");
-    public static final Color BORDER = Color.web("#5a7fa6");
-    public static final Color BORDER_SUBTLE = Color.web("#3d5a80");
-    public static final Color TEXT_PRIMARY = Color.web("#e6f3ff");
-    public static final Color TEXT_MUTED = Color.web("#a8d5ff");
-    public static final Color TEXT_DIM = Color.web("#5a8ac4");
-    public static final Color ACCENT = Color.web("#3b9eff");
-    public static final Color ACCENT_STRONG = Color.web("#1e7fd9");
-    public static final Color ACCENT_SOFT = Color.web("#61dafb");
-    public static final Color SUCCESS = Color.web("#52b788");
-    public static final Color WARNING = Color.web("#ffa630");
-    public static final Color ERROR = Color.web("#ff6b6b");
-    public static final Color WAVEFORM = Color.web("#3b9eff");
-    public static final Color WAVEFORM_BG = Color.web("#1a2633");
+    public static final Color BACKGROUND = Color.web("#f8fafc");
+    public static final Color BACKGROUND_ALT = Color.web("#ffffff");
+    public static final Color SURFACE = Color.web("#ffffff");
+    public static final Color SURFACE_ELEVATED = Color.web("#f1f5f9");
+    public static final Color CARD = Color.web("#ffffff");
+    public static final Color CARD_HOVER = Color.web("#f1f5f9");
+    public static final Color BORDER = Color.web("#e2e8f0");
+    public static final Color BORDER_SUBTLE = Color.web("#f1f5f9");
+    public static final Color TEXT_PRIMARY = Color.web("#0f172a");
+    public static final Color TEXT_MUTED = Color.web("#64748b");
+    public static final Color TEXT_DIM = Color.web("#94a3b8");
+    public static final Color ACCENT = Color.web("#2563eb");
+    public static final Color ACCENT_STRONG = Color.web("#1d4ed8");
+    public static final Color ACCENT_SOFT = Color.web("#dbeafe");
+    public static final Color SUCCESS = Color.web("#16a34a");
+    public static final Color WARNING = Color.web("#d97706");
+    public static final Color ERROR = Color.web("#dc2626");
+    public static final Color WAVEFORM = Color.web("#2563eb");
+    public static final Color WAVEFORM_BG = Color.web("#f1f5f9");
 
     private AppColors() {}
 

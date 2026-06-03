@@ -55,7 +55,6 @@ public class MainController {
 
     @FXML private BorderPane root;
     @FXML private Label appLogoLabel;
-    @FXML private Label appTaglineLabel;
     @FXML private Button btnOpen;
     @FXML private Button btnPlay;
     @FXML private Button btnCompress;
@@ -64,8 +63,6 @@ public class MainController {
     @FXML private Button btnReset;
     @FXML private Button btnOpenEmpty;
     @FXML private Button btnCancel;
-    @FXML private Label workspaceTitleLabel;
-    @FXML private Label workspaceHintLabel;
     @FXML private Menu menuFile;
     @FXML private MenuItem menuOpen;
     @FXML private MenuItem menuSave;
@@ -76,7 +73,6 @@ public class MainController {
     @FXML private VBox workspaceEmpty;
     @FXML private Label emptyTitleLabel;
     @FXML private Label emptySubtitleLabel;
-    @FXML private Label emptyHintLabel;
     @FXML private ProgressBar progressBar;
     @FXML private LineChart<Number, Number> ratioChart;
     @FXML private LineChart<Number, Number> speedChart;
@@ -86,7 +82,6 @@ public class MainController {
     @FXML private NumberAxis speedValueAxis;
     @FXML private ScrollPane sidebarScroll;
     @FXML private Label sidebarTitleLabel;
-    @FXML private Label sidebarSubtitleLabel;
     @FXML private Label sidebarSectionMetadata;
     @FXML private Label metaKeyName;
     @FXML private Label metaKeySize;
@@ -660,7 +655,6 @@ public class MainController {
 
     private void bindLocalizedTexts() {
         appLogoLabel.setText(I18n.get("app.title"));
-        appTaglineLabel.setText(I18n.get("app.tagline"));
         btnOpen.setText(I18n.get("action.open"));
         btnPlay.setText(I18n.get("action.play"));
         btnCompress.setText(I18n.get("action.compress"));
@@ -674,13 +668,9 @@ public class MainController {
         menuSave.setText(I18n.get("menu.save"));
         menuReset.setText(I18n.get("menu.reset"));
         menuExit.setText(I18n.get("menu.exit"));
-        workspaceTitleLabel.setText(I18n.get("workspace.title"));
-        workspaceHintLabel.setText(I18n.get("workspace.hint"));
         emptyTitleLabel.setText(I18n.get("empty.title"));
         emptySubtitleLabel.setText(I18n.get("empty.subtitle"));
-        emptyHintLabel.setText(I18n.get("empty.hint"));
         sidebarTitleLabel.setText(I18n.get("sidebar.title"));
-        sidebarSubtitleLabel.setText(I18n.get("sidebar.subtitle"));
         sidebarSectionMetadata.setText(I18n.get("sidebar.metadata"));
         metaKeyName.setText(I18n.get("metadata.name"));
         metaKeySize.setText(I18n.get("metadata.size"));
