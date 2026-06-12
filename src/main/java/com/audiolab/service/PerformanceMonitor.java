@@ -7,8 +7,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
-
-/** Thread-safe metrics surfaced to JavaFX charts and progress bar. */
 public final class PerformanceMonitor {
 
     private final DoubleProperty progress = new SimpleDoubleProperty(0);

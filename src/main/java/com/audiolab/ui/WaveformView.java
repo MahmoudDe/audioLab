@@ -4,8 +4,6 @@ import com.audiolab.theme.AppColors;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Region;
-
-/** Draws a simple PCM waveform envelope for the loaded audio. */
 public final class WaveformView extends Region {
 
     private short[] samples = new short[0];

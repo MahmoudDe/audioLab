@@ -23,7 +23,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
-/** Orchestrates compression and decompression on a background thread. */
 public final class CompressionService {
 
     private final Map<CompressionAlgorithm, AudioCodec> codecs = new EnumMap<>(CompressionAlgorithm.class);
@@ -150,13 +149,6 @@ public final class CompressionService {
                 onError.accept(e);
             }
         });
-    }
-
-    public void decompressFromFile(byte[] containerBytes, AudioSession session,
-                                   PerformanceMonitor monitor, Runnable onSuccess,
-                                   Consumer<Throwable> onError) {
-        session.setCompressed(new byte[0], containerBytes);
-        decompress(session, monitor, onSuccess, onError);
     }
 
     public void cancel() {

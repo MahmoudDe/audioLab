@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-
-/** Loads string tables from {@code /i18n/strings_&lt;lang&gt;.json}; falls back to English. */
 public final class I18n {
 
     private static final Gson GSON = new Gson();

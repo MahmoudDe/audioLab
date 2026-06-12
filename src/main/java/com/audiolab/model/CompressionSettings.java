@@ -1,6 +1,4 @@
 package com.audiolab.model;
-
-/** User-configurable compression parameters. */
 public final class CompressionSettings {
 
     private CompressionAlgorithm algorithm = CompressionAlgorithm.DPCM;

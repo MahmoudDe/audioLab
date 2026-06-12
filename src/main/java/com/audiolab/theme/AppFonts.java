@@ -4,20 +4,16 @@ import javafx.scene.text.Font;
 
 import java.util.Objects;
 
-/** Loads bundled UI fonts used across the application. */
 public final class AppFonts {
 
-    public static final String FAMILY = "Noto Sans";
-
     public static void load() {
-        loadFont("/fonts/NotoSans-Regular.ttf");
-        loadFont("/fonts/NotoSans-Bold.ttf");
+        load("/fonts/NotoSans-Regular.ttf");
+        load("/fonts/NotoSans-Bold.ttf");
     }
 
-    private static void loadFont(String resourcePath) {
+    private static void load(String path) {
         Font.loadFont(Objects.requireNonNull(
-                AppFonts.class.getResourceAsStream(resourcePath),
-                "Missing font resource: " + resourcePath), 14);
+                AppFonts.class.getResourceAsStream(path), "Missing font: " + path), 14);
     }
 
     private AppFonts() {}

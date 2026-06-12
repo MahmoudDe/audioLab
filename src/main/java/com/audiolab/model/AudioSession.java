@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
 
-/** Holds loaded audio, working buffer, compressed payload, and session state. */
 public final class AudioSession {
 
     private final ObjectProperty<File> sourceFile = new SimpleObjectProperty<>();
@@ -46,7 +45,15 @@ public final class AudioSession {
     }
 
     public boolean hasAudio() {
+        return originalSamples.length > 0 || containerBytes.length > 0;
+    }
+
+    public boolean hasOriginalAudio() {
         return originalSamples.length > 0;
+    }
+
+    public boolean canPlay() {
+        return workingSamples.length > 0;
     }
 
     public short[] originalSamples() {
@@ -105,6 +112,20 @@ public final class AudioSession {
         s.applyDefaultsFromMetadata(meta);
     }
 
+    public void openFromAudc(File file, AudioMetadata meta, byte[] container, byte[] payload,
+                             CompressionSettings containerSettings) {
+        sourceFile.set(file);
+        metadata.set(meta);
+        originalSamples = new short[0];
+        workingSamples = new short[0];
+        compressedPayload = payload != null ? Arrays.copyOf(payload, payload.length) : new byte[0];
+        containerBytes = container != null ? Arrays.copyOf(container, container.length) : new byte[0];
+        playbackMetadata = null;
+        lastReport.set(null);
+        processingState.set(ProcessingState.IDLE);
+        settings.set(containerSettings != null ? containerSettings.copy() : new CompressionSettings());
+    }
+
     public void setWorkingSamples(short[] samples) {
         workingSamples = Arrays.copyOf(samples, samples.length);
     }
@@ -124,10 +145,6 @@ public final class AudioSession {
         return source.forPlayback(workingSamples, source.sampleRate());
     }
 
-    public void clearPlaybackMetadata() {
-        playbackMetadata = null;
-    }
-
     public void setCompressed(byte[] payload, byte[] container) {
         compressedPayload = payload != null ? Arrays.copyOf(payload, payload.length) : new byte[0];
         containerBytes = container != null ? Arrays.copyOf(container, container.length) : new byte[0];
@@ -137,9 +154,13 @@ public final class AudioSession {
         if (!hasAudio()) {
             return;
         }
-        workingSamples = Arrays.copyOf(originalSamples, originalSamples.length);
-        compressedPayload = new byte[0];
-        containerBytes = new byte[0];
+        if (hasOriginalAudio()) {
+            workingSamples = Arrays.copyOf(originalSamples, originalSamples.length);
+            compressedPayload = new byte[0];
+            containerBytes = new byte[0];
+        } else {
+            workingSamples = new short[0];
+        }
         playbackMetadata = null;
         lastReport.set(null);
         processingState.set(ProcessingState.IDLE);

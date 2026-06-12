@@ -4,8 +4,6 @@ import com.audiolab.model.CompressionSettings;
 
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.CancellationException;
-
-/** Delta modulation with adaptive step size based on consecutive bit patterns. */
 public final class AdaptiveDeltaModulationCodec implements AudioCodec {
 
     @Override

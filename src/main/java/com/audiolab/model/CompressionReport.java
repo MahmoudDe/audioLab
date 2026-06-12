@@ -1,6 +1,4 @@
 package com.audiolab.model;
-
-/** Summary generated after a successful compression run. */
 public record CompressionReport(
         long originalSizeBytes,
         long compressedSizeBytes,

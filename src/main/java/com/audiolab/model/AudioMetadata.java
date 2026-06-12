@@ -1,10 +1,11 @@
 package com.audiolab.model;
 
+import com.audiolab.service.compression.AudcContainer;
+
 import javax.sound.sampled.AudioFormat;
 
 import java.io.File;
 
-/** Metadata extracted from a loaded audio file. */
 public record AudioMetadata(
         String fileName,
         String filePath,
@@ -17,6 +18,34 @@ public record AudioMetadata(
         String encodingType,
         AudioFormat audioFormat
 ) {
+    public static AudioMetadata fromAudc(File file, AudcContainer.Header header, long containerSizeBytes) {
+        float sampleRate = header.settings().getTargetSampleRate();
+        int channels = header.channels();
+        int bitDepth = header.bitDepth();
+        int frames = header.sampleCount() / Math.max(1, channels);
+        double duration = frames / sampleRate;
+        int bytesPerFrame = channels * (bitDepth / 8);
+        AudioFormat format = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                sampleRate,
+                bitDepth,
+                channels,
+                bytesPerFrame,
+                sampleRate,
+                false);
+        return new AudioMetadata(
+                file.getName(),
+                file.getAbsolutePath(),
+                containerSizeBytes,
+                duration,
+                sampleRate,
+                channels,
+                bitDepth,
+                (int) (sampleRate * channels * bitDepth),
+                "AUDC / " + header.algorithm().name(),
+                format);
+    }
+
     public static AudioMetadata fromFile(File file, AudioFormat format, long frameCount) {
         int channels = format.getChannels();
         int bitDepth = format.getSampleSizeInBits();
@@ -73,7 +102,6 @@ public record AudioMetadata(
         return String.format("%d:%02d", minutes, seconds);
     }
 
-    /** Builds metadata for playing or exporting a PCM buffer at a specific sample rate. */
     public AudioMetadata forPlayback(short[] samples, float playbackSampleRate) {
         int frames = samples.length / Math.max(1, channels);
         double duration = frames / playbackSampleRate;

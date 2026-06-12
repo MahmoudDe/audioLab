@@ -1,6 +1,4 @@
 package com.audiolab.service.compression;
-
-/** Reports encode/decode progress and supports cooperative cancellation. */
 public interface ProgressCallback {
 
     int CHUNK_SIZE = 4096;

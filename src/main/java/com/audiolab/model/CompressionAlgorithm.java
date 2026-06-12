@@ -1,6 +1,4 @@
 package com.audiolab.model;
-
-/** Supported compression algorithms for the assignment. */
 public enum CompressionAlgorithm {
     DPCM,
     DELTA_MODULATION,

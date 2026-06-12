@@ -4,8 +4,6 @@ import com.audiolab.model.CompressionSettings;
 
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.CancellationException;
-
-/** First-order DPCM with uniform quantization of sample differences. */
 public final class DpcmCodec implements AudioCodec {
 
     @Override

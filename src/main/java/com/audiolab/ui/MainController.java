@@ -1,6 +1,7 @@
 package com.audiolab.ui;
 
 import com.audiolab.i18n.I18n;
+import com.audiolab.io.SupportedAudioFormats;
 import com.audiolab.model.AudioMetadata;
 import com.audiolab.model.CompressionAlgorithm;
 import com.audiolab.model.CompressionReport;
@@ -43,15 +44,11 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.io.File;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/** Main window: audio I/O, compression, playback, and monitoring charts. */
 public class MainController {
-
-    private static final List<String> AUDIO_EXTENSIONS = List.of(".wav");
 
     @FXML private BorderPane root;
     @FXML private Label appLogoLabel;
@@ -199,23 +196,17 @@ public class MainController {
 
         ratioSeries = new XYChart.Series<>();
         speedSeries = new XYChart.Series<>();
+        ratioSeries.setData(monitor.ratioSeries());
+        speedSeries.setData(monitor.speedSeries());
         ratioChart.getData().add(ratioSeries);
         speedChart.getData().add(speedSeries);
 
-        monitor.ratioSeries().addListener((javafx.collections.ListChangeListener<XYChart.Data<Number, Number>>) change -> {
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    ratioSeries.getData().setAll(monitor.ratioSeries());
-                }
-            }
-        });
-        monitor.speedSeries().addListener((javafx.collections.ListChangeListener<XYChart.Data<Number, Number>>) change -> {
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    speedSeries.getData().setAll(monitor.speedSeries());
-                }
-            }
-        });
+        ratioValueAxis.setAutoRanging(true);
+        ratioValueAxis.setLowerBound(0);
+        speedValueAxis.setAutoRanging(true);
+        speedValueAxis.setLowerBound(0);
+        ratioTimeAxis.setAutoRanging(true);
+        speedTimeAxis.setAutoRanging(true);
     }
 
     private void setupSpinners() {
@@ -315,7 +306,11 @@ public class MainController {
         FileChooser chooser = new FileChooser();
         chooser.setTitle(I18n.get("dialog.open.title"));
         chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter(I18n.get("dialog.filter.wav"), "*.wav", "*.WAV"));
+                new FileChooser.ExtensionFilter(I18n.get("dialog.filter.audio"), SupportedAudioFormats.importGlobs()));
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(I18n.get("dialog.filter.audc"), "*.audc", "*.AUDC"));
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(I18n.get("dialog.filter.allSupported"), SupportedAudioFormats.allGlobs()));
         File file = chooser.showOpenDialog(primaryStage);
         if (file != null) {
             loadAudioFile(file);
@@ -327,8 +322,13 @@ public class MainController {
         setStatus(I18n.get("status.loading"), StatusMode.BUSY);
         loader.submit(() -> {
             try {
-                AudioIOService.LoadedAudio loaded = ioService.load(file);
-                Platform.runLater(() -> applyLoadedAudio(file, loaded));
+                if (SupportedAudioFormats.isAudc(file)) {
+                    var loaded = ioService.loadAudc(file);
+                    Platform.runLater(() -> applyLoadedAudc(file, loaded));
+                } else {
+                    var loaded = ioService.load(file);
+                    Platform.runLater(() -> applyLoadedAudio(file, loaded));
+                }
             } catch (Exception e) {
                 Platform.runLater(() -> showError(e.getMessage()));
             }
@@ -350,8 +350,27 @@ public class MainController {
 
         showOptionsForAudio(true);
         updateWorkspaceEmpty(false);
-        setActionButtonsEnabled(true);
+        refreshActionButtons();
         setStatus(I18n.get("status.loaded", loaded.metadata().fileName()), StatusMode.IDLE);
+    }
+
+    private void applyLoadedAudc(File file, AudioIOService.LoadedAudc loaded) {
+        var header = loaded.parsed().header();
+        session.openFromAudc(file, loaded.metadata(), loaded.containerBytes(),
+                loaded.parsed().payload(), header.settings());
+
+        syncSettingsToUi(session.settings());
+        updateMetadata(loaded.metadata());
+        waveformView.clear();
+        monitor.setOriginalSizeBytes((long) header.sampleCount() * 2L);
+        monitor.reset();
+        ratioSeries.getData().clear();
+        speedSeries.getData().clear();
+
+        showOptionsForAudio(true);
+        updateWorkspaceEmpty(false);
+        refreshActionButtons();
+        setStatus(I18n.get("status.loadedAudc", loaded.metadata().fileName()), StatusMode.IDLE);
     }
 
     private void syncSettingsToUi(CompressionSettings settings) {
@@ -408,7 +427,7 @@ public class MainController {
 
     @FXML
     private void onTogglePlayback() {
-        if (!session.hasAudio()) {
+        if (!session.canPlay()) {
             return;
         }
         if (playbackService.isPlaying()) {
@@ -425,7 +444,7 @@ public class MainController {
 
     @FXML
     private void onCompress() {
-        if (!session.hasAudio()) {
+        if (!session.hasOriginalAudio()) {
             return;
         }
         playbackService.stop();
@@ -440,6 +459,7 @@ public class MainController {
         compressionService.compress(session, monitor,
                 report -> Platform.runLater(() -> {
                     setProcessingUi(false);
+                    refreshActionButtons();
                     setStatus(I18n.get("status.compressed"), StatusMode.IDLE);
                     reportCard.setVisible(true);
                     reportCard.setManaged(true);
@@ -472,6 +492,7 @@ public class MainController {
                     waveformView.setSamples(session.workingSamples(),
                             session.metadata().map(AudioMetadata::channels).orElse(1));
                     setProcessingUi(false);
+                    refreshActionButtons();
                     setStatus(I18n.get("status.decompressed"), StatusMode.IDLE);
                 }),
                 error -> Platform.runLater(() -> {
@@ -494,8 +515,12 @@ public class MainController {
         playbackService.stop();
         compressionService.cancel();
         session.resetToOriginal();
-        session.metadata().ifPresent(meta ->
-                waveformView.setSamples(session.workingSamples(), meta.channels()));
+        if (session.canPlay()) {
+            session.metadata().ifPresent(meta ->
+                    waveformView.setSamples(session.workingSamples(), meta.channels()));
+        } else {
+            waveformView.clear();
+        }
         monitor.reset();
         ratioSeries.getData().clear();
         speedSeries.getData().clear();
@@ -618,20 +643,37 @@ public class MainController {
     }
 
     private void setActionButtonsEnabled(boolean enabled) {
-        btnPlay.setDisable(!enabled);
-        btnCompress.setDisable(!enabled);
-        btnDecompress.setDisable(!enabled);
-        btnSave.setDisable(!enabled);
-        btnReset.setDisable(!enabled);
+        if (!enabled) {
+            btnPlay.setDisable(true);
+            btnCompress.setDisable(true);
+            btnDecompress.setDisable(true);
+            btnSave.setDisable(true);
+            btnReset.setDisable(true);
+            return;
+        }
+        refreshActionButtons();
+    }
+
+    private void refreshActionButtons() {
+        boolean loaded = session.hasAudio();
+        btnPlay.setDisable(!session.canPlay());
+        btnCompress.setDisable(!session.hasOriginalAudio());
+        btnDecompress.setDisable(session.containerBytes().length == 0);
+        btnSave.setDisable(!loaded);
+        btnReset.setDisable(!loaded);
     }
 
     private void setProcessingUi(boolean processing) {
         btnOpen.setDisable(processing);
-        btnPlay.setDisable(processing || !session.hasAudio());
-        btnCompress.setDisable(processing || !session.hasAudio());
-        btnDecompress.setDisable(processing || !session.hasAudio());
-        btnSave.setDisable(processing || !session.hasAudio());
-        btnReset.setDisable(processing || !session.hasAudio());
+        if (processing) {
+            btnPlay.setDisable(true);
+            btnCompress.setDisable(true);
+            btnDecompress.setDisable(true);
+            btnSave.setDisable(true);
+            btnReset.setDisable(true);
+        } else {
+            refreshActionButtons();
+        }
         btnCancel.setVisible(processing);
         btnCancel.setManaged(processing);
         statusSpinner.setVisible(processing);
@@ -721,11 +763,7 @@ public class MainController {
     }
 
     private boolean isSupportedAudio(File file) {
-        if (file == null || !file.isFile()) {
-            return false;
-        }
-        String name = file.getName().toLowerCase(Locale.ROOT);
-        return AUDIO_EXTENSIONS.stream().anyMatch(name::endsWith);
+        return SupportedAudioFormats.isSupported(file);
     }
 
     private void showError(String message) {

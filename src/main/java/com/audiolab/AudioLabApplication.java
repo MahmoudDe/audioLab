@@ -12,8 +12,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
-
-/** Boots the primary stage and loads the main layout from FXML. */
 public class AudioLabApplication extends Application {
 
     @Override

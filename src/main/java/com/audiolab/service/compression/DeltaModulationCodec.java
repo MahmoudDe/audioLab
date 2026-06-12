@@ -4,8 +4,6 @@ import com.audiolab.model.CompressionSettings;
 
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.CancellationException;
-
-/** Fixed step-size delta modulation (1 bit per sample). */
 public final class DeltaModulationCodec implements AudioCodec {
 
     @Override

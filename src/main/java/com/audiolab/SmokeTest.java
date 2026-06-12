@@ -12,8 +12,6 @@ import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-
-/** Smoke test for load → compress → decompress round-trip. */
 public final class SmokeTest {
 
     public static void main(String[] args) throws Exception {

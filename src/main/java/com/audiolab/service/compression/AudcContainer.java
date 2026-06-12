@@ -10,8 +10,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-
-/** Custom .audc container for compressed audio payloads. */
 public final class AudcContainer {
 
     private static final byte[] MAGIC = "AUDC".getBytes(StandardCharsets.US_ASCII);

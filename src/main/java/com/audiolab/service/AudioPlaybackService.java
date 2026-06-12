@@ -11,7 +11,6 @@ import java.io.ByteArrayInputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-/** Plays PCM preview audio using javax.sound.sampled.Clip. */
 public final class AudioPlaybackService {
 
     private Clip clip;
@@ -66,7 +65,4 @@ public final class AudioPlaybackService {
         playingStateListener.accept(false);
     }
 
-    public boolean isSupported() {
-        return true;
-    }
 }

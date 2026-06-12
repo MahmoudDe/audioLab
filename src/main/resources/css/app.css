@@ -1,5 +1,3 @@
-/* AudioLab — light, minimal theme */
-
 @font-face {
     font-family: "Noto Sans";
     src: url("../fonts/NotoSans-Regular.ttf");
@@ -17,10 +15,9 @@
     -fx-background-color: #f8fafc;
 }
 
-/* —— Header —— */
 .app-header {
     -fx-background-color: #ffffff;
-    -fx-padding: 12 20 12 20;
+    -fx-padding: 12 20;
     -fx-spacing: 16;
     -fx-alignment: center-left;
     -fx-border-color: #e2e8f0 transparent transparent transparent;
@@ -33,15 +30,11 @@
     -fx-text-fill: #0f172a;
 }
 
-.toolbar-spacer {
-    -fx-min-width: 0;
-}
-
 .tool-button {
     -fx-background-color: #ffffff;
     -fx-text-fill: #334155;
     -fx-background-radius: 6;
-    -fx-padding: 7 14 7 14;
+    -fx-padding: 7 14;
     -fx-font-size: 12px;
     -fx-cursor: hand;
     -fx-border-color: #e2e8f0;
@@ -92,7 +85,6 @@
     -fx-managed: false;
 }
 
-/* —— Workspace —— */
 .workspace-shell {
     -fx-padding: 16;
     -fx-background-color: #f8fafc;
@@ -132,7 +124,6 @@
     -fx-max-width: 320;
 }
 
-/* —— Sidebar —— */
 .sidebar-scroll {
     -fx-background-color: #ffffff;
     -fx-border-color: transparent transparent transparent #e2e8f0;
@@ -228,12 +219,11 @@
     -fx-spacing: 6;
 }
 
-/* —— Status bar —— */
 .status-bar {
     -fx-background-color: #ffffff;
     -fx-border-color: #e2e8f0 transparent transparent transparent;
     -fx-border-width: 1 0 0 0;
-    -fx-padding: 8 20 8 20;
+    -fx-padding: 8 20;
     -fx-spacing: 10;
     -fx-alignment: center-left;
 }
@@ -270,7 +260,6 @@
     -fx-text-fill: #94a3b8;
 }
 
-/* —— Controls —— */
 .combo-box {
     -fx-background-color: #ffffff;
     -fx-border-color: #e2e8f0;
@@ -296,7 +285,7 @@
 .combo-box-popup .list-cell {
     -fx-background-color: #ffffff;
     -fx-text-fill: #0f172a;
-    -fx-padding: 6 10 6 10;
+    -fx-padding: 6 10;
 }
 
 .combo-box-popup .list-cell:hover,
